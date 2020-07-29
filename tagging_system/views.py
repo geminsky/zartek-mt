@@ -18,11 +18,9 @@ class ListImage(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         image_stats = models.ImageStat.objects.filter(user=request.user, is_liked=True)
-        user_images = [i.image for i in image_stats]
+        # user_images = [i.image for i in image_stats]
         tags = [i.image.tag.values("name") for i in image_stats]
         tag_name = list(set([tags[i][0]["name"] for i in range(0, len(tags))]))
-        print("tags", tags)
-        print("tag_names", tag_name)
         images_tag = models.Images.tag.through.objects.filter(tags__name__in=tag_name).order_by("-tags__weightage")
         if images_tag:
             off_images_tag = models.Images.tag.through.objects.exclude(tags__name__in=tag_name)
